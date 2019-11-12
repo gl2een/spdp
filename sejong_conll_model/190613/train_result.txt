@@ -1,0 +1,187 @@
+.
+.
+.
+.
+W. Punct: ucorr: 45533, lcorr: 44270, total: 54311, uas: 83.84%, las: 81.51%, ucm: 29.51%, lcm: 23.56%
+Wo Punct: ucorr: 45533, lcorr: 44270, total: 54311, uas: 83.84%, las: 81.51%, ucm: 29.51%, lcm: 23.56%
+Root: corr: 3799, total: 3799, acc: 100.00%
+----------------------------------------------------------------------------------------------------------------------------
+best dev  W. Punct: ucorr: 45905, lcorr: 44659, total: 54311, uas: 84.52%, las: 82.23%, ucm: 30.64%, lcm: 24.48% (epoch: 15)
+best dev  Wo Punct: ucorr: 45905, lcorr: 44659, total: 54311, uas: 84.52%, las: 82.23%, ucm: 30.64%, lcm: 24.48% (epoch: 15)
+best dev  Root: corr: 3799, total: 3799, acc: 100.00% (epoch: 15)
+----------------------------------------------------------------------------------------------------------------------------
+best test W. Punct: ucorr: 50324, lcorr: 48843, total: 57688, uas: 87.23%, las: 84.67%, ucm: 48.13%, lcm: 40.92% (epoch: 15)
+best test Wo Punct: ucorr: 50324, lcorr: 48843, total: 57688, uas: 87.23%, las: 84.67%, ucm: 48.13%, lcm: 40.92% (epoch: 15)
+best test Root: corr: 5816, total: 5816, acc: 100.00% (epoch: 15)
+============================================================================================================================
+Epoch 20 (FastLSTM, optim: adam, learning rate=0.001000, eps=1.0e-08, decay rate=0.75 (schedule=20, patient=4, decay=0 (9, 5))):
+train: 10/1561 loss (leaf, non_leaf): 1.2395, arc: 0.5816 (0.2857, 0.2960), type: 0.6578 (0.0135, 0.6443), coverage: 0.8984, time
+train: 20/1561 loss (leaf, non_leaf): 1.2775, arc: 0.5924 (0.2944, 0.2980), type: 0.6851 (0.0095, 0.6755), coverage: 0.8620, time
+train: 30/1561 loss (leaf, non_leaf): 1.2679, arc: 0.5931 (0.2933, 0.2999), type: 0.6748 (0.0089, 0.6659), coverage: 0.8526, time
+train: 40/1561 loss (leaf, non_leaf): 1.2238, arc: 0.5572 (0.2737, 0.2836), type: 0.6666 (0.0081, 0.6586), coverage: 0.7770, time
+train: 50/1561 loss (leaf, non_leaf): 1.1985, arc: 0.5287 (0.2609, 0.2678), type: 0.6698 (0.0072, 0.6626), coverage: 0.7177, time
+train: 60/1561 loss (leaf, non_leaf): 1.2708, arc: 0.6001 (0.2930, 0.3071), type: 0.6707 (0.0087, 0.6620), coverage: 0.9123, time
+train: 70/1561 loss (leaf, non_leaf): 1.3430, arc: 0.6621 (0.3183, 0.3438), type: 0.6809 (0.0104, 0.6705), coverage: 1.1445, time
+train: 80/1561 loss (leaf, non_leaf): 1.3297, arc: 0.6572 (0.3208, 0.3364), type: 0.6725 (0.0101, 0.6624), coverage: 1.1211, time
+train: 90/1561 loss (leaf, non_leaf): 1.3425, arc: 0.6699 (0.3236, 0.3463), type: 0.6726 (0.0109, 0.6617), coverage: 1.1874, time
+train: 100/1561 loss (leaf, non_leaf): 1.3384, arc: 0.6699 (0.3258, 0.3441), type: 0.6685 (0.0105, 0.6580), coverage: 1.1814, time
+train: 110/1561 loss (leaf, non_leaf): 1.3434, arc: 0.6761 (0.3312, 0.3449), type: 0.6673 (0.0101, 0.6572), coverage: 1.1764, time
+train: 120/1561 loss (leaf, non_leaf): 1.3478, arc: 0.6778 (0.3337, 0.3441), type: 0.6700 (0.0098, 0.6602), coverage: 1.1799, time
+train: 130/1561 loss (leaf, non_leaf): 1.3362, arc: 0.6708 (0.3290, 0.3417), type: 0.6654 (0.0096, 0.6558), coverage: 1.1607, time
+train: 140/1561 loss (leaf, non_leaf): 1.3263, arc: 0.6637 (0.3252, 0.3385), type: 0.6626 (0.0092, 0.6534), coverage: 1.1385, time
+train: 150/1561 loss (leaf, non_leaf): 1.3290, arc: 0.6639 (0.3261, 0.3378), type: 0.6651 (0.0091, 0.6560), coverage: 1.1407, time
+train: 160/1561 loss (leaf, non_leaf): 1.3420, arc: 0.6738 (0.3312, 0.3426), type: 0.6682 (0.0091, 0.6591), coverage: 1.1800, time
+train: 170/1561 loss (leaf, non_leaf): 1.3327, arc: 0.6687 (0.3275, 0.3411), type: 0.6640 (0.0092, 0.6549), coverage: 1.1650, time
+train: 180/1561 loss (leaf, non_leaf): 1.3276, arc: 0.6653 (0.3268, 0.3385), type: 0.6623 (0.0093, 0.6530), coverage: 1.1531, time
+train: 190/1561 loss (leaf, non_leaf): 1.3208, arc: 0.6595 (0.3239, 0.3356), type: 0.6613 (0.0090, 0.6523), coverage: 1.1361, time
+train: 200/1561 loss (leaf, non_leaf): 1.3255, arc: 0.6618 (0.3244, 0.3374), type: 0.6636 (0.0090, 0.6546), coverage: 1.1380, time
+train: 210/1561 loss (leaf, non_leaf): 1.3294, arc: 0.6644 (0.3254, 0.3390), type: 0.6650 (0.0092, 0.6557), coverage: 1.1399, time
+train: 220/1561 loss (leaf, non_leaf): 1.3240, arc: 0.6611 (0.3242, 0.3369), type: 0.6629 (0.0091, 0.6538), coverage: 1.1292, time
+train: 230/1561 loss (leaf, non_leaf): 1.3259, arc: 0.6618 (0.3245, 0.3374), type: 0.6641 (0.0090, 0.6552), coverage: 1.1294, time
+train: 240/1561 loss (leaf, non_leaf): 1.3285, arc: 0.6630 (0.3256, 0.3373), type: 0.6655 (0.0092, 0.6564), coverage: 1.1367, time
+train: 250/1561 loss (leaf, non_leaf): 1.3247, arc: 0.6600 (0.3239, 0.3361), type: 0.6647 (0.0092, 0.6554), coverage: 1.1261, time
+train: 260/1561 loss (leaf, non_leaf): 1.3261, arc: 0.6622 (0.3255, 0.3367), type: 0.6639 (0.0092, 0.6546), coverage: 1.1373, time
+train: 270/1561 loss (leaf, non_leaf): 1.3258, arc: 0.6618 (0.3251, 0.3368), type: 0.6640 (0.0091, 0.6549), coverage: 1.1316, time
+train: 280/1561 loss (leaf, non_leaf): 1.3279, arc: 0.6629 (0.3255, 0.3373), type: 0.6650 (0.0092, 0.6558), coverage: 1.1394, time
+train: 290/1561 loss (leaf, non_leaf): 1.3249, arc: 0.6602 (0.3244, 0.3358), type: 0.6647 (0.0091, 0.6556), coverage: 1.1290, time
+train: 300/1561 loss (leaf, non_leaf): 1.3228, arc: 0.6590 (0.3246, 0.3345), type: 0.6638 (0.0092, 0.6546), coverage: 1.1223, time
+train: 310/1561 loss (leaf, non_leaf): 1.3168, arc: 0.6539 (0.3219, 0.3320), type: 0.6628 (0.0091, 0.6537), coverage: 1.1088, time
+train: 320/1561 loss (leaf, non_leaf): 1.3122, arc: 0.6499 (0.3195, 0.3304), type: 0.6623 (0.0090, 0.6533), coverage: 1.0973, time
+train: 330/1561 loss (leaf, non_leaf): 1.3100, arc: 0.6485 (0.3196, 0.3288), type: 0.6615 (0.0091, 0.6524), coverage: 1.0915, time
+train: 340/1561 loss (leaf, non_leaf): 1.3048, arc: 0.6442 (0.3170, 0.3272), type: 0.6607 (0.0091, 0.6516), coverage: 1.0812, time
+train: 350/1561 loss (leaf, non_leaf): 1.3014, arc: 0.6407 (0.3158, 0.3250), type: 0.6606 (0.0089, 0.6517), coverage: 1.0721, time
+train: 360/1561 loss (leaf, non_leaf): 1.3005, arc: 0.6405 (0.3154, 0.3251), type: 0.6600 (0.0090, 0.6511), coverage: 1.0698, time
+train: 370/1561 loss (leaf, non_leaf): 1.2975, arc: 0.6377 (0.3142, 0.3234), type: 0.6598 (0.0089, 0.6509), coverage: 1.0604, time
+train: 380/1561 loss (leaf, non_leaf): 1.2930, arc: 0.6344 (0.3124, 0.3220), type: 0.6586 (0.0088, 0.6498), coverage: 1.0517, time
+train: 390/1561 loss (leaf, non_leaf): 1.2888, arc: 0.6307 (0.3108, 0.3199), type: 0.6581 (0.0087, 0.6494), coverage: 1.0411, time
+train: 400/1561 loss (leaf, non_leaf): 1.2875, arc: 0.6303 (0.3110, 0.3193), type: 0.6572 (0.0086, 0.6486), coverage: 1.0418, time
+train: 410/1561 loss (leaf, non_leaf): 1.2892, arc: 0.6316 (0.3119, 0.3197), type: 0.6575 (0.0087, 0.6488), coverage: 1.0455, time
+train: 420/1561 loss (leaf, non_leaf): 1.2860, arc: 0.6291 (0.3103, 0.3188), type: 0.6569 (0.0086, 0.6483), coverage: 1.0381, time
+train: 430/1561 loss (leaf, non_leaf): 1.2872, arc: 0.6304 (0.3113, 0.3191), type: 0.6568 (0.0086, 0.6482), coverage: 1.0454, time
+train: 440/1561 loss (leaf, non_leaf): 1.2826, arc: 0.6269 (0.3097, 0.3173), type: 0.6557 (0.0085, 0.6472), coverage: 1.0366, time
+train: 450/1561 loss (leaf, non_leaf): 1.2825, arc: 0.6265 (0.3098, 0.3167), type: 0.6560 (0.0085, 0.6475), coverage: 1.0337, time
+train: 460/1561 loss (leaf, non_leaf): 1.2799, arc: 0.6237 (0.3078, 0.3159), type: 0.6563 (0.0084, 0.6478), coverage: 1.0274, time
+train: 470/1561 loss (leaf, non_leaf): 1.2790, arc: 0.6238 (0.3082, 0.3157), type: 0.6552 (0.0085, 0.6467), coverage: 1.0294, time
+train: 480/1561 loss (leaf, non_leaf): 1.2770, arc: 0.6228 (0.3075, 0.3152), type: 0.6542 (0.0085, 0.6457), coverage: 1.0253, time
+train: 490/1561 loss (leaf, non_leaf): 1.2780, arc: 0.6245 (0.3086, 0.3159), type: 0.6536 (0.0088, 0.6448), coverage: 1.0310, time
+train: 500/1561 loss (leaf, non_leaf): 1.2856, arc: 0.6307 (0.3112, 0.3195), type: 0.6549 (0.0088, 0.6461), coverage: 1.0518, time
+train: 510/1561 loss (leaf, non_leaf): 1.2905, arc: 0.6349 (0.3133, 0.3216), type: 0.6556 (0.0090, 0.6465), coverage: 1.0676, time
+train: 520/1561 loss (leaf, non_leaf): 1.2927, arc: 0.6367 (0.3145, 0.3222), type: 0.6560 (0.0091, 0.6469), coverage: 1.0716, time
+train: 530/1561 loss (leaf, non_leaf): 1.2994, arc: 0.6426 (0.3164, 0.3262), type: 0.6568 (0.0092, 0.6477), coverage: 1.0873, time
+train: 540/1561 loss (leaf, non_leaf): 1.2976, arc: 0.6409 (0.3161, 0.3249), type: 0.6566 (0.0091, 0.6475), coverage: 1.0811, time
+train: 550/1561 loss (leaf, non_leaf): 1.2946, arc: 0.6382 (0.3145, 0.3236), type: 0.6564 (0.0091, 0.6474), coverage: 1.0739, time
+train: 560/1561 loss (leaf, non_leaf): 1.2923, arc: 0.6365 (0.3137, 0.3228), type: 0.6558 (0.0090, 0.6468), coverage: 1.0693, time
+train: 570/1561 loss (leaf, non_leaf): 1.2913, arc: 0.6362 (0.3136, 0.3225), type: 0.6551 (0.0090, 0.6461), coverage: 1.0681, time
+train: 580/1561 loss (leaf, non_leaf): 1.2959, arc: 0.6401 (0.3157, 0.3243), type: 0.6558 (0.0091, 0.6468), coverage: 1.0808, time
+train: 590/1561 loss (leaf, non_leaf): 1.2958, arc: 0.6399 (0.3157, 0.3242), type: 0.6559 (0.0090, 0.6469), coverage: 1.0799, time
+train: 600/1561 loss (leaf, non_leaf): 1.2935, arc: 0.6373 (0.3142, 0.3231), type: 0.6562 (0.0089, 0.6473), coverage: 1.0735, time
+train: 610/1561 loss (leaf, non_leaf): 1.2931, arc: 0.6369 (0.3144, 0.3225), type: 0.6562 (0.0089, 0.6473), coverage: 1.0718, time
+train: 620/1561 loss (leaf, non_leaf): 1.2932, arc: 0.6374 (0.3145, 0.3230), type: 0.6557 (0.0089, 0.6468), coverage: 1.0712, time
+train: 630/1561 loss (leaf, non_leaf): 1.2938, arc: 0.6383 (0.3149, 0.3233), type: 0.6555 (0.0089, 0.6466), coverage: 1.0719, time
+train: 640/1561 loss (leaf, non_leaf): 1.2932, arc: 0.6381 (0.3146, 0.3234), type: 0.6552 (0.0089, 0.6462), coverage: 1.0702, time
+train: 650/1561 loss (leaf, non_leaf): 1.2937, arc: 0.6383 (0.3150, 0.3233), type: 0.6554 (0.0089, 0.6465), coverage: 1.0698, time
+train: 660/1561 loss (leaf, non_leaf): 1.2962, arc: 0.6400 (0.3157, 0.3243), type: 0.6562 (0.0090, 0.6473), coverage: 1.0739, time
+train: 670/1561 loss (leaf, non_leaf): 1.2963, arc: 0.6399 (0.3160, 0.3239), type: 0.6564 (0.0089, 0.6475), coverage: 1.0733, time
+train: 680/1561 loss (leaf, non_leaf): 1.2945, arc: 0.6391 (0.3157, 0.3234), type: 0.6554 (0.0089, 0.6465), coverage: 1.0707, time
+train: 690/1561 loss (leaf, non_leaf): 1.2919, arc: 0.6376 (0.3150, 0.3226), type: 0.6543 (0.0089, 0.6455), coverage: 1.0668, time
+train: 700/1561 loss (leaf, non_leaf): 1.2957, arc: 0.6400 (0.3162, 0.3238), type: 0.6557 (0.0090, 0.6467), coverage: 1.0725, time
+train: 710/1561 loss (leaf, non_leaf): 1.2949, arc: 0.6390 (0.3154, 0.3236), type: 0.6558 (0.0089, 0.6469), coverage: 1.0686, time
+train: 720/1561 loss (leaf, non_leaf): 1.2947, arc: 0.6389 (0.3158, 0.3231), type: 0.6558 (0.0090, 0.6468), coverage: 1.0685, time
+train: 730/1561 loss (leaf, non_leaf): 1.2955, arc: 0.6396 (0.3163, 0.3233), type: 0.6559 (0.0091, 0.6468), coverage: 1.0716, time
+train: 740/1561 loss (leaf, non_leaf): 1.2938, arc: 0.6385 (0.3153, 0.3232), type: 0.6554 (0.0090, 0.6464), coverage: 1.0693, time
+train: 750/1561 loss (leaf, non_leaf): 1.2965, arc: 0.6409 (0.3167, 0.3242), type: 0.6556 (0.0090, 0.6466), coverage: 1.0769, time
+train: 760/1561 loss (leaf, non_leaf): 1.2975, arc: 0.6416 (0.3169, 0.3248), type: 0.6559 (0.0090, 0.6469), coverage: 1.0792, time
+train: 770/1561 loss (leaf, non_leaf): 1.2953, arc: 0.6397 (0.3159, 0.3238), type: 0.6556 (0.0090, 0.6466), coverage: 1.0739, time
+train: 780/1561 loss (leaf, non_leaf): 1.2957, arc: 0.6403 (0.3165, 0.3238), type: 0.6554 (0.0090, 0.6464), coverage: 1.0752, time
+train: 790/1561 loss (leaf, non_leaf): 1.2956, arc: 0.6401 (0.3163, 0.3238), type: 0.6555 (0.0090, 0.6465), coverage: 1.0745, time
+train: 800/1561 loss (leaf, non_leaf): 1.2947, arc: 0.6393 (0.3158, 0.3235), type: 0.6555 (0.0090, 0.6465), coverage: 1.0717, time
+train: 810/1561 loss (leaf, non_leaf): 1.2930, arc: 0.6378 (0.3151, 0.3227), type: 0.6552 (0.0090, 0.6463), coverage: 1.0677, time
+train: 820/1561 loss (leaf, non_leaf): 1.2922, arc: 0.6372 (0.3149, 0.3224), type: 0.6549 (0.0089, 0.6460), coverage: 1.0658, time
+train: 830/1561 loss (leaf, non_leaf): 1.2907, arc: 0.6362 (0.3143, 0.3219), type: 0.6545 (0.0089, 0.6456), coverage: 1.0624, time
+train: 840/1561 loss (leaf, non_leaf): 1.2940, arc: 0.6390 (0.3162, 0.3228), type: 0.6550 (0.0091, 0.6459), coverage: 1.0716, time
+train: 850/1561 loss (leaf, non_leaf): 1.2925, arc: 0.6375 (0.3153, 0.3221), type: 0.6550 (0.0091, 0.6460), coverage: 1.0677, time
+train: 860/1561 loss (leaf, non_leaf): 1.2935, arc: 0.6385 (0.3157, 0.3227), type: 0.6550 (0.0090, 0.6460), coverage: 1.0696, time
+train: 870/1561 loss (leaf, non_leaf): 1.2915, arc: 0.6368 (0.3151, 0.3217), type: 0.6547 (0.0090, 0.6457), coverage: 1.0657, time
+train: 880/1561 loss (leaf, non_leaf): 1.2910, arc: 0.6366 (0.3146, 0.3220), type: 0.6544 (0.0090, 0.6454), coverage: 1.0660, time
+train: 890/1561 loss (leaf, non_leaf): 1.2948, arc: 0.6391 (0.3159, 0.3232), type: 0.6556 (0.0091, 0.6465), coverage: 1.0765, time
+train: 900/1561 loss (leaf, non_leaf): 1.2934, arc: 0.6381 (0.3155, 0.3227), type: 0.6553 (0.0091, 0.6462), coverage: 1.0739, time
+train: 910/1561 loss (leaf, non_leaf): 1.2920, arc: 0.6367 (0.3147, 0.3220), type: 0.6552 (0.0090, 0.6462), coverage: 1.0701, time
+train: 920/1561 loss (leaf, non_leaf): 1.2937, arc: 0.6385 (0.3152, 0.3233), type: 0.6552 (0.0092, 0.6460), coverage: 1.0760, time
+train: 930/1561 loss (leaf, non_leaf): 1.2961, arc: 0.6408 (0.3166, 0.3242), type: 0.6553 (0.0092, 0.6461), coverage: 1.0838, time
+train: 940/1561 loss (leaf, non_leaf): 1.2965, arc: 0.6407 (0.3164, 0.3243), type: 0.6557 (0.0092, 0.6465), coverage: 1.0835, time
+train: 950/1561 loss (leaf, non_leaf): 1.2949, arc: 0.6393 (0.3159, 0.3234), type: 0.6555 (0.0092, 0.6464), coverage: 1.0797, time
+train: 960/1561 loss (leaf, non_leaf): 1.2958, arc: 0.6402 (0.3160, 0.3242), type: 0.6556 (0.0092, 0.6465), coverage: 1.0829, time
+train: 970/1561 loss (leaf, non_leaf): 1.2959, arc: 0.6400 (0.3163, 0.3237), type: 0.6559 (0.0092, 0.6467), coverage: 1.0827, time
+train: 980/1561 loss (leaf, non_leaf): 1.2990, arc: 0.6426 (0.3175, 0.3252), type: 0.6564 (0.0092, 0.6472), coverage: 1.0905, time
+train: 990/1561 loss (leaf, non_leaf): 1.2982, arc: 0.6419 (0.3171, 0.3247), type: 0.6564 (0.0092, 0.6472), coverage: 1.0885, time
+train: 1000/1561 loss (leaf, non_leaf): 1.2975, arc: 0.6413 (0.3171, 0.3241), type: 0.6563 (0.0092, 0.6471), coverage: 1.0854, time
+train: 1010/1561 loss (leaf, non_leaf): 1.2960, arc: 0.6398 (0.3163, 0.3236), type: 0.6562 (0.0092, 0.6471), coverage: 1.0815, time
+train: 1020/1561 loss (leaf, non_leaf): 1.2990, arc: 0.6421 (0.3175, 0.3246), type: 0.6569 (0.0092, 0.6477), coverage: 1.0888, time
+train: 1030/1561 loss (leaf, non_leaf): 1.3014, arc: 0.6439 (0.3186, 0.3253), type: 0.6575 (0.0093, 0.6482), coverage: 1.0956, time
+train: 1040/1561 loss (leaf, non_leaf): 1.3004, arc: 0.6429 (0.3181, 0.3248), type: 0.6576 (0.0093, 0.6483), coverage: 1.0925, time
+train: 1050/1561 loss (leaf, non_leaf): 1.3012, arc: 0.6439 (0.3182, 0.3256), type: 0.6573 (0.0093, 0.6481), coverage: 1.0951, time
+train: 1060/1561 loss (leaf, non_leaf): 1.3020, arc: 0.6443 (0.3186, 0.3257), type: 0.6577 (0.0093, 0.6484), coverage: 1.0961, time
+train: 1070/1561 loss (leaf, non_leaf): 1.3010, arc: 0.6434 (0.3182, 0.3252), type: 0.6576 (0.0092, 0.6484), coverage: 1.0940, time
+train: 1080/1561 loss (leaf, non_leaf): 1.3009, arc: 0.6429 (0.3179, 0.3251), type: 0.6579 (0.0092, 0.6487), coverage: 1.0923, time
+train: 1090/1561 loss (leaf, non_leaf): 1.3007, arc: 0.6431 (0.3180, 0.3251), type: 0.6576 (0.0093, 0.6483), coverage: 1.0917, time
+train: 1100/1561 loss (leaf, non_leaf): 1.2989, arc: 0.6417 (0.3173, 0.3244), type: 0.6573 (0.0093, 0.6480), coverage: 1.0876, time
+train: 1110/1561 loss (leaf, non_leaf): 1.3003, arc: 0.6429 (0.3179, 0.3250), type: 0.6574 (0.0093, 0.6481), coverage: 1.0917, time
+train: 1120/1561 loss (leaf, non_leaf): 1.3023, arc: 0.6445 (0.3187, 0.3258), type: 0.6578 (0.0093, 0.6485), coverage: 1.0954, time
+train: 1130/1561 loss (leaf, non_leaf): 1.3016, arc: 0.6436 (0.3183, 0.3253), type: 0.6579 (0.0093, 0.6487), coverage: 1.0927, time
+train: 1140/1561 loss (leaf, non_leaf): 1.3017, arc: 0.6439 (0.3183, 0.3256), type: 0.6578 (0.0092, 0.6485), coverage: 1.0948, time
+train: 1150/1561 loss (leaf, non_leaf): 1.3010, arc: 0.6435 (0.3182, 0.3254), type: 0.6575 (0.0092, 0.6483), coverage: 1.0927, time
+train: 1160/1561 loss (leaf, non_leaf): 1.3030, arc: 0.6451 (0.3189, 0.3262), type: 0.6579 (0.0093, 0.6486), coverage: 1.0980, time
+train: 1170/1561 loss (leaf, non_leaf): 1.3035, arc: 0.6457 (0.3192, 0.3265), type: 0.6578 (0.0093, 0.6485), coverage: 1.0997, time
+train: 1180/1561 loss (leaf, non_leaf): 1.3030, arc: 0.6452 (0.3189, 0.3262), type: 0.6578 (0.0092, 0.6486), coverage: 1.0981, time
+train: 1190/1561 loss (leaf, non_leaf): 1.3026, arc: 0.6447 (0.3187, 0.3260), type: 0.6579 (0.0092, 0.6487), coverage: 1.0963, time
+train: 1200/1561 loss (leaf, non_leaf): 1.3027, arc: 0.6447 (0.3186, 0.3261), type: 0.6580 (0.0092, 0.6488), coverage: 1.0971, time
+train: 1210/1561 loss (leaf, non_leaf): 1.3026, arc: 0.6444 (0.3185, 0.3259), type: 0.6581 (0.0092, 0.6489), coverage: 1.0959, time
+train: 1220/1561 loss (leaf, non_leaf): 1.3024, arc: 0.6444 (0.3185, 0.3258), type: 0.6580 (0.0092, 0.6488), coverage: 1.0958, time
+train: 1230/1561 loss (leaf, non_leaf): 1.3022, arc: 0.6443 (0.3184, 0.3259), type: 0.6579 (0.0092, 0.6487), coverage: 1.0954, time
+train: 1240/1561 loss (leaf, non_leaf): 1.3013, arc: 0.6433 (0.3179, 0.3254), type: 0.6580 (0.0092, 0.6488), coverage: 1.0922, time
+train: 1250/1561 loss (leaf, non_leaf): 1.3027, arc: 0.6446 (0.3185, 0.3261), type: 0.6581 (0.0092, 0.6489), coverage: 1.0981, time
+train: 1260/1561 loss (leaf, non_leaf): 1.3029, arc: 0.6448 (0.3188, 0.3261), type: 0.6580 (0.0092, 0.6488), coverage: 1.0982, time
+train: 1270/1561 loss (leaf, non_leaf): 1.3021, arc: 0.6444 (0.3184, 0.3259), type: 0.6577 (0.0092, 0.6485), coverage: 1.0967, time
+train: 1280/1561 loss (leaf, non_leaf): 1.3017, arc: 0.6440 (0.3183, 0.3257), type: 0.6577 (0.0092, 0.6485), coverage: 1.0953, time
+train: 1290/1561 loss (leaf, non_leaf): 1.3012, arc: 0.6436 (0.3181, 0.3255), type: 0.6576 (0.0091, 0.6485), coverage: 1.0937, time
+train: 1300/1561 loss (leaf, non_leaf): 1.3027, arc: 0.6451 (0.3190, 0.3261), type: 0.6576 (0.0091, 0.6484), coverage: 1.0988, time
+train: 1310/1561 loss (leaf, non_leaf): 1.3042, arc: 0.6461 (0.3194, 0.3267), type: 0.6581 (0.0092, 0.6490), coverage: 1.1007, time
+train: 1320/1561 loss (leaf, non_leaf): 1.3048, arc: 0.6466 (0.3196, 0.3270), type: 0.6582 (0.0091, 0.6490), coverage: 1.1013, time
+train: 1330/1561 loss (leaf, non_leaf): 1.3034, arc: 0.6455 (0.3190, 0.3265), type: 0.6579 (0.0091, 0.6488), coverage: 1.0986, time
+train: 1340/1561 loss (leaf, non_leaf): 1.3035, arc: 0.6453 (0.3190, 0.3263), type: 0.6582 (0.0091, 0.6490), coverage: 1.0976, time
+train: 1350/1561 loss (leaf, non_leaf): 1.3029, arc: 0.6447 (0.3187, 0.3260), type: 0.6582 (0.0091, 0.6491), coverage: 1.0955, time
+train: 1360/1561 loss (leaf, non_leaf): 1.3014, arc: 0.6436 (0.3182, 0.3254), type: 0.6578 (0.0091, 0.6488), coverage: 1.0927, time
+train: 1370/1561 loss (leaf, non_leaf): 1.3013, arc: 0.6435 (0.3181, 0.3255), type: 0.6577 (0.0090, 0.6487), coverage: 1.0931, time
+train: 1380/1561 loss (leaf, non_leaf): 1.3006, arc: 0.6431 (0.3180, 0.3251), type: 0.6575 (0.0090, 0.6485), coverage: 1.0914, time
+train: 1390/1561 loss (leaf, non_leaf): 1.3033, arc: 0.6455 (0.3189, 0.3266), type: 0.6578 (0.0091, 0.6487), coverage: 1.1001, time
+train: 1400/1561 loss (leaf, non_leaf): 1.3032, arc: 0.6456 (0.3190, 0.3266), type: 0.6576 (0.0091, 0.6485), coverage: 1.1007, time
+train: 1410/1561 loss (leaf, non_leaf): 1.3029, arc: 0.6454 (0.3189, 0.3265), type: 0.6575 (0.0091, 0.6484), coverage: 1.0996, time
+train: 1420/1561 loss (leaf, non_leaf): 1.3029, arc: 0.6453 (0.3189, 0.3264), type: 0.6576 (0.0090, 0.6486), coverage: 1.0998, time
+train: 1430/1561 loss (leaf, non_leaf): 1.3022, arc: 0.6447 (0.3185, 0.3261), type: 0.6576 (0.0090, 0.6485), coverage: 1.0983, time
+train: 1440/1561 loss (leaf, non_leaf): 1.3050, arc: 0.6473 (0.3200, 0.3273), type: 0.6577 (0.0091, 0.6486), coverage: 1.1073, time
+train: 1450/1561 loss (leaf, non_leaf): 1.3068, arc: 0.6489 (0.3205, 0.3283), type: 0.6579 (0.0091, 0.6488), coverage: 1.1119, time
+train: 1460/1561 loss (leaf, non_leaf): 1.3059, arc: 0.6479 (0.3200, 0.3279), type: 0.6580 (0.0091, 0.6489), coverage: 1.1095, time
+train: 1470/1561 loss (leaf, non_leaf): 1.3055, arc: 0.6477 (0.3200, 0.3277), type: 0.6577 (0.0091, 0.6487), coverage: 1.1089, time
+train: 1480/1561 loss (leaf, non_leaf): 1.3045, arc: 0.6469 (0.3197, 0.3273), type: 0.6576 (0.0091, 0.6485), coverage: 1.1065, time
+train: 1490/1561 loss (leaf, non_leaf): 1.3034, arc: 0.6458 (0.3191, 0.3268), type: 0.6576 (0.0090, 0.6486), coverage: 1.1037, time
+train: 1500/1561 loss (leaf, non_leaf): 1.3044, arc: 0.6466 (0.3195, 0.3271), type: 0.6578 (0.0091, 0.6487), coverage: 1.1060, time
+train: 1510/1561 loss (leaf, non_leaf): 1.3049, arc: 0.6472 (0.3199, 0.3273), type: 0.6577 (0.0091, 0.6486), coverage: 1.1082, time
+train: 1520/1561 loss (leaf, non_leaf): 1.3049, arc: 0.6473 (0.3198, 0.3275), type: 0.6576 (0.0091, 0.6485), coverage: 1.1085, time
+train: 1530/1561 loss (leaf, non_leaf): 1.3047, arc: 0.6470 (0.3196, 0.3274), type: 0.6577 (0.0091, 0.6486), coverage: 1.1079, time
+train: 1540/1561 loss (leaf, non_leaf): 1.3054, arc: 0.6476 (0.3199, 0.3276), type: 0.6578 (0.0091, 0.6487), coverage: 1.1098, time
+train: 1550/1561 loss (leaf, non_leaf): 1.3046, arc: 0.6472 (0.3198, 0.3274), type: 0.6575 (0.0091, 0.6484), coverage: 1.1083, time
+train: 1560/1561 loss (leaf, non_leaf): 1.3056, arc: 0.6480 (0.3203, 0.3278), type: 0.6576 (0.0091, 0.6485), coverage: 1.1112, time
+train: 1561 loss (leaf, non_leaf): 1.3057, arc: 0.6480 (0.3203, 0.3277), type: 0.6577 (0.0091, 0.6486), coverage: 1.1111, time: 3553.11s
+W. Punct: ucorr: 45897, lcorr: 44696, total: 54311, uas: 84.51%, las: 82.30%, ucm: 30.80%, lcm: 24.59%
+Wo Punct: ucorr: 45897, lcorr: 44696, total: 54311, uas: 84.51%, las: 82.30%, ucm: 30.80%, lcm: 24.59%
+Root: corr: 3799, total: 3799, acc: 100.00%
+----------------------------------------------------------------------------------------------------------------------------
+best dev  W. Punct: ucorr: 45897, lcorr: 44696, total: 54311, uas: 84.51%, las: 82.30%, ucm: 30.80%, lcm: 24.59% (epoch: 20)
+best dev  Wo Punct: ucorr: 45897, lcorr: 44696, total: 54311, uas: 84.51%, las: 82.30%, ucm: 30.80%, lcm: 24.59% (epoch: 20)
+best dev  Root: corr: 3799, total: 3799, acc: 100.00% (epoch: 20)
+----------------------------------------------------------------------------------------------------------------------------
+best test W. Punct: ucorr: 50273, lcorr: 48883, total: 57688, uas: 87.15%, las: 84.74%, ucm: 48.14%, lcm: 41.45% (epoch: 20)
+best test Wo Punct: ucorr: 50273, lcorr: 48883, total: 57688, uas: 87.15%, las: 84.74%, ucm: 48.14%, lcm: 41.45% (epoch: 20)
+best test Root: corr: 5816, total: 5816, acc: 100.00% (epoch: 20)
+============================================================================================================================
+
