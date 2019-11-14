@@ -215,7 +215,10 @@ class CoNLLXReader(object):
             pos_seqs.append(poss)
             pos_id_seqs.append(pos_ids)
 
-            head = tokens[6]
+            # 191112 gl2een
+            # for prediction
+            #head = tokens[6]
+            head = -1
 
             type = tokens[7]
 

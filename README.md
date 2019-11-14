@@ -32,8 +32,15 @@ python StackPointerParser_test.py --model_path *"model_path"* --model_name *"mod
 ------
 
 
-python StackPointerParser_predict.py --model_path *%PROJECT_PATH%/sejong_conll_model/181108* --model_name *94ea90_sejong_ppos2.model* --output_path *"output_file_path"* --test *"test_file_path"* --batch_size *"batch_size"*
+python StackPointerParser_predict.py --model_path *"MODEL_PATH"* --model_name *"MODEL_NAME"* --output_path *"OUTPUT_FILE_PATH"* --predcit_data *"PREDICT_FILE_PATH"* 
 
 - raw text를 입력받아 형태소 분석 후 CoNLL-u 포맷으로 만들어 의존 구문 분석된 파일을 출력
 - 테스트 파일은 한 라인당 한 문장으로 구성되어 있어야 함
-- mecab 형태소 분석기 사용 
+- MeCab 형태소 분석기 사용 
+
+
+### TODO
+- 세종<->mecab 형태소 태그 통일 필요
+- mecab 형태소 분석 결과 형태와 세종 말뭉치 포맷 통일
+ : mecab 분석 결과가 종성으로 나오는 것 수정(dic을 고쳐야할듯)
+- 음절, 형태소, 형태소 태그 임베딩 결합

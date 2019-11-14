@@ -28,7 +28,7 @@ def main():
     args_parser.add_argument('--model_path', help='path for parser model directory', required=True)
     args_parser.add_argument('--model_name', help='parser model file', required=True)
     args_parser.add_argument('--output_path', help='path for result with parser model', required=True)
-    args_parser.add_argument('--test', required=True)
+    args_parser.add_argument('--predict_data', help='data for predict ', required=True)
     args_parser.add_argument('--conllu_converted', help='path for converted conllu file from test file')
     args_parser.add_argument('--beam', type=int, default=1, help='Beam size for decoding')
     args_parser.add_argument('--use_gpu', action='store_true', help='use the gpu')
@@ -43,7 +43,7 @@ def main():
     output_path = args.output_path
     beam = args.beam
     use_gpu = args.use_gpu
-    test_path = args.test
+    predict_data = args.predict_data
     batch_size = args.batch_size
 
     def load_args():
@@ -103,13 +103,13 @@ def main():
 
     logger = get_logger("Data Reading")
     logger.info("Convert origin text to CoNLL-u format")
-    converter = CoNLLUConverter(test_path, conllu_converted)
+    converter = CoNLLUConverter(predict_data, conllu_converted)
 
-    converted_test_path = converter.convert()
+    converted_predict_data = converter.convert()
 
     logger.info("Read converted data")
 
-    data_test = conllx_stacked_data.read_stacked_data_to_variable_for_prediction(converted_test_path, word_alphabet, char_alphabet, pos_alphabet, type_alphabet, use_gpu=use_gpu, prior_order=prior_order)
+    data_test = conllx_stacked_data.read_stacked_data_to_variable_for_prediction(converted_predict_data, word_alphabet, char_alphabet, pos_alphabet, type_alphabet, use_gpu=use_gpu, prior_order=prior_order)
     num_data = sum(data_test[1])
 
     word_table = None
