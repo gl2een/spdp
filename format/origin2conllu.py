@@ -1,6 +1,5 @@
 import mecab
-#from neuronlp2.io.logger import get_logger
-import pdb
+from neuronlp2.io.logger import get_logger
 import sys
 
 
@@ -25,8 +24,8 @@ class CoNLLUConverter(object):
         self.__conll_file.close()
 
     def convert(self):
-        #logger = get_logger("CoNLL-u Converter")
-        #logger.info("Converting the original file to CoNLL-u formatted file")
+        logger = get_logger("CoNLL-u Converter")
+        logger.info("Converting the original file to CoNLL-u formatted file")
 
         if self.__source_file is None:
             self.open()
@@ -70,8 +69,6 @@ class CoNLLUConverter(object):
             cur_eojeol_len = origin_eojeol_count[cur_eojeol]
             len_buf = 0
 
-            #pdb.set_trace()
-
             for row in analyzed_list:
                 if cur_eojeol_len == len_buf:
                     morph.append(m_buf)
@@ -93,16 +90,15 @@ class CoNLLUConverter(object):
 
                 p_buf.append(analyzed[0])
 
-                if analyzed[4] == 'inflected':
-                    m_buf.append([a.split('/')[0] for a in analyzed[7].split('+')])
+                if analyzed[4] == 'Inflect':
+                    #m_buf.append([a.split('/')[0] for a in analyzed[7].split('+')])
+                    m_buf += [a.split('/')[0] for a in analyzed[7].split('+')]
                 else:
                     m_buf.append(origin)
 
-                len_buf += len(m_buf[-1])
+                #len_buf += sum([len(mm) for mm in m_buf[-1]])
+                len_buf += len(origin)
             
-            print(morph)
-            print(pos)
-
             self.__conll_file.write('#SENTID:%d\n' % snt_id)
             self.__conll_file.write('#ORGSENT:%s\n' % origin_snt)
 
@@ -115,7 +111,7 @@ class CoNLLUConverter(object):
 
         self.close()
 
-        #logger.info('Converted data : %d' % snt_id)
+        logger.info('Converted data : %d' % snt_id)
 
         return self.__conll_path
 
