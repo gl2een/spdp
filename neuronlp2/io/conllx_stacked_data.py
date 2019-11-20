@@ -7,7 +7,7 @@ from .conllx_data import _buckets, PAD_ID_WORD, PAD_ID_CHAR, PAD_ID_TAG, UNK_ID
 from .conllx_data import NUM_SYMBOLIC_TAGS
 from .conllx_data import create_alphabets, load_alphabets
 from . import utils
-from .reader import CoNLLXReader
+from .reader import CoNLLXReader, DataReader
 
 
 def _obtain_child_index_for_left2right(heads):
@@ -170,6 +170,67 @@ def read_stacked_data_for_prediction(source_path, word_alphabet, char_alphabet, 
     print("Total number of data: %d" % counter)
     return data, max_lemma_length, max_char_length
 
+def sentence_to_stacked_data_for_prediction(analyzed_snt, word_alphabet, char_alphabet, pos_alphabet, type_alphabet, max_size=None, normalize_digits=True, prior_order='deep_first'):
+    data = [[] for _ in _buckets]
+    max_lemma_length = [0 for _ in _buckets]
+    max_char_length = [0 for _ in _buckets]
+
+    counter = 0
+    #reader = CoNLLXReader(source_path, word_alphabet, char_alphabet, pos_alphabet, type_alphabet)
+    reader = DataReader(analyzed_snt, word_alphabet, char_alphabet, pos_alphabet, type_alphabet)
+    inst = reader.getDependencyInstance(normalize_digits=normalize_digits, symbolic_root=True, symbolic_end=False)
+
+    inst_size = inst.length()
+    sent = inst.sentence
+    for bucket_id, bucket_size in enumerate(_buckets):
+        if inst_size <= bucket_size:
+            stacked_heads, children, siblings, stacked_types, skip_connect = _generate_stack_inputs(inst.heads, inst.type_ids, prior_order)
+            data[bucket_id].append([sent.word_ids, sent.char_id_seqs, inst.pos_ids, inst.heads, inst.type_ids, stacked_heads, children, siblings, stacked_types, skip_connect, sent.sentence])
+            char_lengths = []
+            for eojul in sent.char_seqs:
+                for char_seq in eojul:
+                    char_lengths.append(len(char_seq))
+            max_len = max(char_lengths)
+            #max_len = max([len(char_seq) for char_seq in eojul for eojul in sent.char_seqs])
+            if max_char_length[bucket_id] < max_len:
+                max_char_length[bucket_id] = max_len
+
+            max_len = max([len(word_seq) for word_seq in sent.words])
+            if max_lemma_length[bucket_id] < max_len:
+                max_lemma_length[bucket_id] = max_len
+            break
+
+    return data, max_lemma_length, max_char_length
+    '''
+    while inst is not None and (not max_size or counter < max_size):
+        counter += 1
+        if counter % 10000 == 0:
+            print("reading data: %d" % counter)
+
+        inst_size = inst.length()
+        sent = inst.sentence
+        for bucket_id, bucket_size in enumerate(_buckets):
+            if inst_size <= bucket_size:
+                stacked_heads, children, siblings, stacked_types, skip_connect = _generate_stack_inputs(inst.heads, inst.type_ids, prior_order)
+                data[bucket_id].append([sent.word_ids, sent.char_id_seqs, inst.pos_ids, inst.heads, inst.type_ids, stacked_heads, children, siblings, stacked_types, skip_connect, sent.sentence])
+                char_lengths = []
+                for eojul in sent.char_seqs:
+                    for char_seq in eojul:
+                        char_lengths.append(len(char_seq))
+                max_len = max(char_lengths)
+                #max_len = max([len(char_seq) for char_seq in eojul for eojul in sent.char_seqs])
+                if max_char_length[bucket_id] < max_len:
+                    max_char_length[bucket_id] = max_len
+
+                max_len = max([len(word_seq) for word_seq in sent.words])
+                if max_lemma_length[bucket_id] < max_len:
+                    max_lemma_length[bucket_id] = max_len
+                break
+
+        #inst = reader.getNext_predict(normalize_digits=normalize_digits, symbolic_root=True, symbolic_end=False)
+    print("Total number of data: %d" % counter)
+    return data, max_lemma_length, max_char_length
+    '''
 
 def read_stacked_data_to_variable(source_path, word_alphabet, char_alphabet, pos_alphabet, type_alphabet,
                                   max_size=None, normalize_digits=True, prior_order='deep_first', use_gpu=False):
@@ -346,6 +407,189 @@ def read_stacked_data_to_variable_for_prediction(source_path, word_alphabet, cha
                                   sentence(원문)
                                 ]
     '''
+
+    bucket_sizes = [len(data[b]) for b in range(len(_buckets))]
+
+    data_variable = []
+
+    for bucket_id in range(len(_buckets)):
+        bucket_size = bucket_sizes[bucket_id]
+        if bucket_size == 0:
+            data_variable.append((1, 1))
+            continue
+
+        bucket_length = _buckets[bucket_id]
+        lemma_length = min(utils.MAX_EOJUL_LENGTH, max_lemma_length[bucket_id] + utils.NUM_EOJUL_PAD)
+        char_length = min(utils.MAX_CHAR_LENGTH, max_char_length[bucket_id] + utils.NUM_CHAR_PAD)
+        wid_inputs = np.empty([bucket_size, bucket_length, lemma_length], dtype=np.int64)
+        cid_inputs = np.empty([bucket_size, bucket_length, lemma_length, char_length], dtype=np.int64)
+        pid_inputs = np.empty([bucket_size, bucket_length, lemma_length], dtype=np.int64)
+
+        ## 160614 gl2een
+        ## for prediction
+        #hid_inputs = np.empty([bucket_size, bucket_length], dtype=np.int64)
+        #tid_inputs = np.empty([bucket_size, bucket_length], dtype=np.int64)
+        ## end of gl2een
+
+        masks_e = np.zeros([bucket_size, bucket_length], dtype=np.float32)
+        single = np.zeros([bucket_size, bucket_length, lemma_length], dtype=np.int64)
+        lengths_e = np.empty(bucket_size, dtype=np.int64)
+
+        ## 160614 gl2een
+        ## for prediction
+        '''
+        stack_hid_inputs = np.empty([bucket_size, 2 * bucket_length - 1], dtype=np.int64)
+        chid_inputs = np.empty([bucket_size, 2 * bucket_length - 1], dtype=np.int64)
+        ssid_inputs = np.empty([bucket_size, 2 * bucket_length - 1], dtype=np.int64)
+        stack_tid_inputs = np.empty([bucket_size, 2 * bucket_length - 1], dtype=np.int64)
+        skip_connect_inputs = np.empty([bucket_size, 2 * bucket_length - 1], dtype=np.int64)
+        masks_d = np.zeros([bucket_size, 2 * bucket_length - 1], dtype=np.float32)
+        lengths_d = np.empty(bucket_size, dtype=np.int64)
+        '''
+        ## end of gl2een
+
+        sentences = []
+
+        for i, inst in enumerate(data[bucket_id]):
+            wids, cid_seqs, pids, hids, tids, stack_hids, chids, ssids, stack_tids, skip_ids, sentence = inst
+            inst_size = len(wids)
+            lengths_e[i] = inst_size
+            # word ids
+            for w, w_ids in enumerate(wids):
+                wid_inputs[i, w, :len(w_ids)] = w_ids
+                wid_inputs[i, w, len(w_ids):] = PAD_ID_WORD
+            wid_inputs[i, inst_size:, :] = PAD_ID_WORD
+
+            # char ids
+            for c, cids in enumerate(cid_seqs):
+                for l, lids in enumerate(cids):
+                    cid_inputs[i, c, l, :len(lids)] = lids
+                    cid_inputs[i, c, l, len(lids):] = PAD_ID_CHAR
+                cid_inputs[i, c, len(cids):, :] = PAD_ID_CHAR
+            cid_inputs[i, inst_size:, :, :] = PAD_ID_CHAR
+
+            # pos ids
+            for p, p_ids in enumerate(pids):
+                pid_inputs[i, p, :len(p_ids)] = p_ids
+                pid_inputs[i, p, len(p_ids):] = PAD_ID_TAG
+            pid_inputs[i, inst_size:, :] = PAD_ID_TAG
+
+            ## 190614 gl2een
+            ## for prediction
+            # type ids
+            #tid_inputs[i, :inst_size] = tids
+            #tid_inputs[i, inst_size:] = PAD_ID_TAG
+            # heads
+            #hid_inputs[i, :inst_size] = hids
+            #hid_inputs[i, inst_size:] = PAD_ID_TAG
+            ## end of gl2een
+
+            # masks_e
+            masks_e[i, :inst_size] = 1.0
+            for j, lids in enumerate(wids):
+                for k, wid in enumerate(lids):
+                    if word_alphabet.is_singleton(wid):
+                        single[i, j, k] = 1
+
+            ## 190614 gl2een
+            ## for prediction
+            '''
+            inst_size_decoder = 2 * inst_size - 1
+            lengths_d[i] = inst_size_decoder
+
+            # stacked heads
+            stack_hid_inputs[i, :inst_size_decoder] = stack_hids
+            stack_hid_inputs[i, inst_size_decoder:] = PAD_ID_TAG
+            # children
+            chid_inputs[i, :inst_size_decoder] = chids
+            chid_inputs[i, inst_size_decoder:] = PAD_ID_TAG
+            # siblings
+            ssid_inputs[i, :inst_size_decoder] = ssids
+            ssid_inputs[i, inst_size_decoder:] = PAD_ID_TAG
+            # stacked types
+            stack_tid_inputs[i, :inst_size_decoder] = stack_tids
+            stack_tid_inputs[i, inst_size_decoder:] = PAD_ID_TAG
+            # skip connects
+            skip_connect_inputs[i, :inst_size_decoder] = skip_ids
+            skip_connect_inputs[i, inst_size_decoder:] = PAD_ID_TAG
+
+            # masks_d
+            masks_d[i, :inst_size_decoder] = 1.0
+            '''
+            ## end of gl2een
+            sentences.append(sentence)
+
+        words = torch.from_numpy(wid_inputs)
+        chars = torch.from_numpy(cid_inputs)
+        pos = torch.from_numpy(pid_inputs)
+
+        ## 190614 gl2een
+        ## for prediction
+        #heads = torch.from_numpy(hid_inputs)
+        #types = torch.from_numpy(tid_inputs)
+        ## end of gl2een
+
+        masks_e = torch.from_numpy(masks_e)
+        single = torch.from_numpy(single)
+        lengths_e = torch.from_numpy(lengths_e)
+
+        ## 190614 gl2een
+        ## for prediction
+        '''
+        stacked_heads = torch.from_numpy(stack_hid_inputs)
+        children = torch.from_numpy(chid_inputs)
+        siblings = torch.from_numpy(ssid_inputs)
+        stacked_types = torch.from_numpy(stack_tid_inputs)
+        skip_connect = torch.from_numpy(skip_connect_inputs)
+        masks_d = torch.from_numpy(masks_d)
+        lengths_d = torch.from_numpy(lengths_d)
+        '''
+        ## end of gl2een
+
+        data_variable.append(((words, chars, pos, masks_e, single, lengths_e),
+                              sentences))
+    return data_variable, bucket_sizes
+
+
+def sentence_to_variable_for_prediction(analyzed_snt, word_alphabet, char_alphabet, pos_alphabet, type_alphabet,
+                                  max_size=None, normalize_digits=True, prior_order='deep_first', use_gpu=False):
+    """
+    191119 gl2een
+    convert analyzed sentence to variable for prediction
+
+    :param analyzed_snt: conll-u formatted sentence without heads, types
+    :param word_alphabet: word vocab
+    :param char_alphabet: character vocab
+    :param pos_alphabet: pos vocab
+    :param type_alphabet: type vocab
+    :param max_size: maximum data size
+    :param normalize_digits: flag for normalizing digits
+    :param prior_order: stacked data prior order
+    :param use_gpu: flag for using GPU
+    :returns data_variable:
+    :returns bucket_size:
+    """
+
+    #data, max_lemma_length, max_char_length = read_stacked_data_for_prediction(source_path, word_alphabet, char_alphabet, pos_alphabet, type_alphabet, max_size=max_size, normalize_digits=normalize_digits, prior_order=prior_order)
+    data, max_lemma_length, max_char_length = sentence_to_stacked_data_for_prediction(analyzed_snt, word_alphabet, char_alphabet, pos_alphabet, type_alphabet, max_size=max_size, normalize_digits=normalize_digits, prior_order=prior_order)
+    """
+    data : list. 버킷 사이즈별로 파싱된 문장을 가지고 있음
+         : 버킷 사이즈는 문장 내 어절 개수
+         : (ex. 한 문장의 어절 개수가 29개 이고, symbolic_root 옵션으로 root까지 추가되어 30개일 때, 버킷 사이즈가 data[30] 안의 리스트에 속하게 됨
+         :: data[bucket_size] : list of 해당 bucket_size 이상의 어절 개수를 가진 문장들
+         :: data[bucket_size] : [ 단어 id list,
+                                  음절 id list,
+                                  품사 태그 id list,
+                                  head list,
+                                  type id list,
+                                  stacked head(root부터 의존소를 따라 만들어진 head list. prior order 옵션에 따라 head stack 순서가 달라짐),
+                                  children(stacked head의 의존소 id),
+                                  sibling,
+                                  stacked_types,
+                                  skip_connect(??)
+                                  sentence(원문)
+                                ]
+    """
 
     bucket_sizes = [len(data[b]) for b in range(len(_buckets))]
 

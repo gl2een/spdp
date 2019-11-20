@@ -38,9 +38,14 @@ python StackPointerParser_predict.py --model_path *"MODEL_PATH"* --model_name *"
 - 테스트 파일은 한 라인당 한 문장으로 구성되어 있어야 함
 - MeCab 형태소 분석기 사용 
 
+### mecab-ko-dic for Stack Pointer Network Dependency Parsing
+- 세종 말뭉치 <-> mecab 형식 통일을 위한 사전 커스텀화
+- Inflect.csv에서 호환형이 아닌 자음(초성, 종성)을 호환형(일반적인 자음)으로 변환
 
 ### TODO
 - 세종<->mecab 형태소 태그 통일 필요
 - mecab 형태소 분석 결과 형태와 세종 말뭉치 포맷 통일
- : mecab 분석 결과가 종성으로 나오는 것 수정(dic을 고쳐야할듯)
+ ~~: mecab 분석 결과가 종성으로 나오는 것 수정(dic을 고쳐야할듯)~~
+- 였<->았 처리 필요
 - 음절, 형태소, 형태소 태그 임베딩 결합
+

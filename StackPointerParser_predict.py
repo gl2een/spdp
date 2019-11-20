@@ -10,10 +10,12 @@ import time
 import argparse
 import json
 
+#import pdb
+
 import torch
 from neuronlp2.io import get_logger, conllx_stacked_data
 from neuronlp2.models import StackPtrNet
-from neuronlp2.io import CoNLLXWriter
+from neuronlp2.io import CoNLLXWriter, DataWriter
 from format.origin2conllu import CoNLLUConverter
 
 
@@ -33,6 +35,7 @@ def main():
     args_parser.add_argument('--beam', type=int, default=1, help='Beam size for decoding')
     args_parser.add_argument('--use_gpu', action='store_true', help='use the gpu')
     args_parser.add_argument('--batch_size', type=int, default=32)
+    args_parser.add_argument('--use_stdio', action='store_true', help='Predict the data from STDIN, print result to STDOUT')
 
     args = args_parser.parse_args()
 
@@ -45,6 +48,7 @@ def main():
     use_gpu = args.use_gpu
     predict_data = args.predict_data
     batch_size = args.batch_size
+    use_stdio = args.use_stdio
 
     def load_args():
         with open("{}.arg.json".format(model_name)) as f:
@@ -97,20 +101,9 @@ def main():
     ##########################
 
     ##########################
-    # Data loading start
+    # Vocabulary loading start
     ##########################
     start_time = time.time()
-
-    logger = get_logger("Data Reading")
-    logger.info("Convert origin text to CoNLL-u format")
-    converter = CoNLLUConverter(predict_data, conllu_converted)
-
-    converted_predict_data = converter.convert()
-
-    logger.info("Read converted data")
-
-    data_test = conllx_stacked_data.read_stacked_data_to_variable_for_prediction(converted_predict_data, word_alphabet, char_alphabet, pos_alphabet, type_alphabet, use_gpu=use_gpu, prior_order=prior_order)
-    num_data = sum(data_test[1])
 
     word_table = None
     word_dim = arguments[0]
@@ -135,9 +128,9 @@ def main():
         print("Mismatching number types of vocabulary({} != {})".format(arguments[14], num_types))
         exit()
 
-    logger.info("Data Loading Time : %s" % (time.time() - start_time))
+    logger.info("vocabulary Loading Time : %s" % (time.time() - start_time))
     ##########################
-    # End of Data Loading
+    # End of Vocabulary Loading
     ##########################
 
     ##########################
@@ -162,7 +155,10 @@ def main():
     else:
         network.load_state_dict(torch.load(model_name, map_location='cpu'))
 
-    pred_writer = CoNLLXWriter(word_alphabet, char_alphabet, pos_alphabet, type_alphabet)
+    if use_stdio:
+        pred_writer = DataWriter(word_alphabet, char_alphabet, pos_alphabet, type_alphabet)
+    else:
+        pred_writer = CoNLLXWriter(word_alphabet, char_alphabet, pos_alphabet, type_alphabet)
 
     logger.info("Embedding dim: word=%d, char=%d, pos=%d" % (word_dim, char_dim, pos_dim))
     logger.info("Char CNN: filter=%d, kernel=%d" % (char_num_filters, char_window))
@@ -180,6 +176,39 @@ def main():
     # End of Stack Pointer Network Loading
     ##########################
 
+
+    ##########################
+    # Read Data to predict
+    ##########################
+    logger = get_logger("Data Reading")
+
+    if use_stdio:
+        logger.info("Convert origin text to CoNLL-u format from STDIN")
+        converter = CoNLLUConverter()
+
+        raw_snt = ''
+        while raw_snt == '':
+            print("Input the sentence to parse") 
+            raw_snt = input('>> ')
+        analyzed_snt  = converter.convert_from_stdin(raw_snt)
+
+        data_test = conllx_stacked_data.sentence_to_variable_for_prediction(analyzed_snt, word_alphabet, char_alphabet, pos_alphabet, type_alphabet, use_gpu=use_gpu, prior_order=prior_order)
+
+    else:
+        start_time = time.time()
+        logger.info("Convert origin text to CoNLL-u format from file")
+        converter = CoNLLUConverter(predict_data, conllu_converted)
+        source_path = converter.convert_from_file()
+        data_test = conllx_stacked_data.read_stacked_data_to_variable_for_prediction(source_path, word_alphabet, char_alphabet, pos_alphabet, type_alphabet, use_gpu=use_gpu, prior_order=prior_order)
+
+        logger.info("Data converting Finished")
+        logger.info("Data from file to CoNLL-u format converting Time : %s" % (time.time() - start_time))
+
+    num_data = sum(data_test[1])
+    ##########################
+    # End of Reading Data
+    ##########################
+
     ##########################
     # Prediction start
     ##########################
@@ -187,8 +216,9 @@ def main():
     logger = get_logger("Predicting data")
     logger.info("Predicting data start")
 
-    pred_filename = '%s' % (output_path, )
-    pred_writer.start(pred_filename)
+    if use_stdio == False:
+        pred_filename = '%s' % (output_path, )
+        pred_writer.start(pred_filename)
 
     total_inst = 0
     num_back = 0
@@ -217,7 +247,8 @@ def main():
         sys.stdout.flush()
         num_back = len(log_info)
 
-    pred_writer.close()
+    if use_stdio == False:
+        pred_writer.close()
 
     sys.stdout.write("\b" * num_back)
     sys.stdout.write(" " * num_back)

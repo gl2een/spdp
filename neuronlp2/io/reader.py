@@ -314,3 +314,171 @@ class CoNLL03Reader(object):
 
         return NERInstance(Sentence(words, word_ids, char_seqs, char_id_seqs), postags, pos_ids, chunk_tags, chunk_ids,
                            ner_tags, ner_ids)
+
+
+class DataReader(object):
+    def __init__(self, analyzed_snt, word_alphabet, char_alphabet, pos_alphabet, type_alphabet):
+        self.__analyzed_snt = analyzed_snt
+        self.__word_alphabet = word_alphabet
+        self.__char_alphabet = char_alphabet
+        self.__pos_alphabet = pos_alphabet
+        self.__type_alphabet = type_alphabet
+
+    def getDependencyInstance(self, normalize_digits=True, symbolic_root=False, symbolic_end=False, sent_id=0):
+        """
+        191119 gl2een
+        convert analyzed sentence to dependency instance
+        get ids from word, char, pos, vocab
+
+        :param normalize_digits:
+        :param symbolic_root:
+        :param symbolic_end:
+        :param sent_id:
+        :returns DependencyInstance
+        """
+
+        word_seqs = []
+        word_id_seqs = []
+        char_seqs = []
+        char_id_seqs = []
+        pos_seqs = []
+        pos_id_seqs = []
+        types = []
+        type_ids = []
+        heads = []
+
+        if symbolic_root:
+            word_seqs.append([ROOT, ])
+            word_id_seqs.append([self.__word_alphabet.get_index(ROOT), ])
+            char_seqs.append([[ROOT_CHAR, ]])
+            char_id_seqs.append([[self.__char_alphabet.get_index(ROOT_CHAR), ]])
+            pos_seqs.append([ROOT_POS, ])
+            pos_id_seqs.append([self.__pos_alphabet.get_index(ROOT_POS), ])
+            types.append(ROOT_TYPE)
+            type_ids.append(self.__type_alphabet.get_index(ROOT_TYPE))
+            heads.append(0)
+
+        """
+        words = []
+        word_ids = []
+        chars = []
+        char_ids = []
+        for lemma in self.__morph:
+            lemma_ = utils.DIGIT_RE.sub("0", lemma) if normalize_digits else lemma
+            words.append(lemma_)
+            word_ids.append(self.__word_alphabet.get_index(lemma_))
+            lemmas = []
+            lemma_ids = []
+            for char in lemma:
+                lemmas.append(char)
+                lemma_ids.append(self.__char_alphabet.get_index(char))
+            if len(chars) > utils.MAX_CHAR_LENGTH:
+                lemmas = lemmas[:utils.MAX_CHAR_LENGTH]
+                lemma_ids = lemma_ids[:utils.MAX_CHAR_LENGTH]
+            chars.append(lemmas)
+            char_ids.append(lemma_ids)
+        if len(words) > utils.MAX_EOJUL_LENGTH:
+            words = words[:utils.MAX_EOJUL_LENGTH]
+            word_ids = word_ids[:utils.MAX_EOJUL_LENGTH]
+        word_seqs.append(words)
+        word_id_seqs.append(word_ids)
+        char_seqs.append(chars)
+        char_id_seqs.append(char_ids)
+
+        poss = []
+        pos_ids = []
+
+        for pos in self.__pos:
+            poss.append(pos)
+            pos_ids.append(self.__pos_alphabet.get_index(pos))
+        if len(poss) > utils.MAX_POS_LENGTH:
+            poss = poss[:utils.MAX_POS_LENGTH]
+            pos_ids = pos_ids[:utils.MAX_POS_LENGTH]
+
+        pos_seqs.append(poss)
+        pos_id_seqs.append(pos_ids)
+
+        # 191112 gl2een
+        # for prediction
+        #head = tokens[6]
+        head = -1
+
+        type = tokens[7]
+
+        types.append(type)
+        type_ids.append(-1)
+
+        heads.append(head)
+        """
+
+        lines = []
+        for row in self.__analyzed_snt:
+            row = row.strip()
+            lines.append(row.split('\t'))
+
+        length = len(lines)
+        if length == 0:
+            return None
+
+        for tokens in lines: 
+            words = []
+            word_ids = []
+            chars = []
+            char_ids = []
+            for lemma in tokens[2].split(" "):
+                lemma_ = utils.DIGIT_RE.sub("0", lemma) if normalize_digits else lemma
+                words.append(lemma_)
+                word_ids.append(self.__word_alphabet.get_index(lemma_))
+                lemmas = []
+                lemma_ids = []
+                for char in lemma:
+                    lemmas.append(char)
+                    lemma_ids.append(self.__char_alphabet.get_index(char))
+                if len(chars) > utils.MAX_CHAR_LENGTH:
+                    lemmas = lemmas[:utils.MAX_CHAR_LENGTH]
+                    lemma_ids = lemma_ids[:utils.MAX_CHAR_LENGTH]
+                chars.append(lemmas)
+                char_ids.append(lemma_ids)
+            if len(words) > utils.MAX_EOJUL_LENGTH:
+                words = words[:utils.MAX_EOJUL_LENGTH]
+                word_ids = word_ids[:utils.MAX_EOJUL_LENGTH]
+            word_seqs.append(words)
+            word_id_seqs.append(word_ids)
+            char_seqs.append(chars)
+            char_id_seqs.append(char_ids)
+
+            poss = []
+            pos_ids = []
+
+            for pos in tokens[4].split("+"):
+                poss.append(pos)
+                pos_ids.append(self.__pos_alphabet.get_index(pos))
+            if len(poss) > utils.MAX_POS_LENGTH:
+                poss = poss[:utils.MAX_POS_LENGTH]
+                pos_ids = pos_ids[:utils.MAX_POS_LENGTH]
+
+            pos_seqs.append(poss)
+            pos_id_seqs.append(pos_ids)
+
+            # 191112 gl2een
+            # for prediction
+            #head = tokens[6]
+            #type = tokens[7]
+
+            types.append('-')
+            type_ids.append(-1)
+
+            heads.append(-1)
+
+        if symbolic_end:
+            word_seqs.append([END, ])
+            word_id_seqs.append([self.__word_alphabet.get_index(END), ])
+            char_seqs.append([END_CHAR, ])
+            char_id_seqs.append([self.__char_alphabet.get_index(END_CHAR), ])
+            pos_seqs.append([END_POS, ])
+            pos_id_seqs.append([self.__pos_alphabet.get_index(END_POS), ])
+            types.append(END_TYPE)
+            type_ids.append(self.__type_alphabet.get_index(END_TYPE))
+            heads.append(0)
+
+        return DependencyInstance(Sentence(word_seqs, word_id_seqs, char_seqs, char_id_seqs, sent_id, lines), pos_seqs, pos_id_seqs, heads, types, type_ids)

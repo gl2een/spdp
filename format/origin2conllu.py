@@ -1,18 +1,23 @@
-import mecab
+#import mecab
+import MeCab
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from neuronlp2.io.logger import get_logger
-import sys
 
 
 class CoNLLUConverter(object):
-    def __init__(self, source_path, output_path=None):
+    def __init__(self, source_path=None, output_path=None):
         self.__source_file = None
         self.__conll_file = None
         self.__source_path = source_path
-        if output_path == None:
+        if output_path == None and source_path != None:
             self.__conll_path = source_path + '_converted.conll'
         else:
             self.__conll_path = output_path 
-        self.__mecab = mecab.MeCab().tagger
+        #self.__mecab = mecab.MeCab().tagger
+        mecab_ko_dic_path = '-d ' + os.path.dirname(os.path.abspath(__file__)) + '/../mecab-ko-dic'
+        self.__mecab = MeCab.Tagger(mecab_ko_dic_path)
         self.__ma_list = []
 
     def open(self):
@@ -23,7 +28,76 @@ class CoNLLUConverter(object):
         self.__source_file.close()
         self.__conll_file.close()
 
-    def convert(self):
+    def convert_from_stdin(self, origin_snt):
+        """
+        191119 gl2een
+        raw sentence to morpheme analyzed data
+        :param origin_snt: raw origin sentence
+        :returns: tuple
+                analyed morpheme list and pos list
+        """
+        origin_snt = origin_snt.strip()
+        analyzed_list = self.__mecab.parse(origin_snt).split('\n')
+
+        # 원문 어절별 음절 길이
+        origin_eojeol_count = [len(e) for e in origin_snt.split()]
+
+        morph = []
+        pos = []
+        m_buf = []
+        p_buf = []
+        cur_eojeol = 0
+        cur_eojeol_len = origin_eojeol_count[cur_eojeol]
+        len_buf = 0
+
+        for row in analyzed_list:
+            if cur_eojeol_len == len_buf:
+                morph.append(m_buf)
+                pos.append(p_buf)
+
+                cur_eojeol += 1
+                if cur_eojeol == len(origin_eojeol_count):
+                    break
+                cur_eojeol_len = origin_eojeol_count[cur_eojeol]
+                len_buf = 0
+                m_buf = []
+                p_buf = []
+
+            if row == 'EOS':
+                break
+
+            origin, analyzed = row.split('\t')
+            analyzed =  analyzed.split(',')
+
+            p_buf.append(analyzed[0])
+            #p_buf += analyzed[0].split('+')
+
+            if analyzed[4] == 'Inflect':
+                #m_buf.append([a.split('/')[0] for a in analyzed[7].split('+')])
+                m_buf += [a.split('/')[0] for a in analyzed[7].split('+')]
+            else:
+                m_buf.append(origin)
+
+            #len_buf += sum([len(mm) for mm in m_buf[-1]])
+            len_buf += len(origin)
+
+        origin_eojeols = origin_snt.split(' ')
+
+        result = []
+        for i in range(len(morph)):
+            result.append('%d\t%s\t%s\t-\t%s\t-\t-\t-\t-\t-\n' % (i+1, origin_eojeols[i], ' '.join(morph[i]), '+'.join(pos[i])))
+
+        #result = ''.join(result)
+
+        #return (morph, pos)
+        return result
+
+    def convert_from_file(self):
+        """
+        19xxxx gl2een
+        read the file with raw sentences, convert to CoNLL-u formatted file
+        :returns: path of converted file
+        """
         logger = get_logger("CoNLL-u Converter")
         logger.info("Converting the original file to CoNLL-u formatted file")
 
