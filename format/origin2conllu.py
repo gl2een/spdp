@@ -16,7 +16,16 @@ class CoNLLUConverter(object):
         else:
             self.__conll_path = output_path 
         #self.__mecab = mecab.MeCab().tagger
+        
+        # 191120 gl2een
+        # modified mecab-ko-dic for SPDP
+        # change chosung, jongsung to general jamo in Inflect result
         mecab_ko_dic_path = '-d ' + os.path.dirname(os.path.abspath(__file__)) + '/../mecab-ko-dic'
+        if not os.path.exists(mecab_ko_dic_path):
+            print('Cannot find mecab-ko-dic directory')
+            print('MeCab dictionary error')
+            exit(-1)
+
         self.__mecab = MeCab.Tagger(mecab_ko_dic_path)
         self.__ma_list = []
 
