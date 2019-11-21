@@ -7,7 +7,7 @@ from neuronlp2.io.logger import get_logger
 
 
 class CoNLLUConverter(object):
-    def __init__(self, source_path=None, output_path=None):
+    def __init__(self, source_path=None, output_path=None, mecab_dic_path=None):
         self.__source_file = None
         self.__conll_file = None
         self.__source_path = source_path
@@ -20,13 +20,17 @@ class CoNLLUConverter(object):
         # 191120 gl2een
         # modified mecab-ko-dic for SPDP
         # change chosung, jongsung to general jamo in Inflect result
-        mecab_ko_dic_path = '-d ' + os.path.dirname(os.path.abspath(__file__)) + '/../mecab-ko-dic'
+        if mecab_dic_path == None:
+            mecab_ko_dic_path = os.path.dirname(os.path.abspath(__file__)) + '/../mecab-ko-dic'
+        else:
+            mecab_ko_dic_path = mecab_dic_path
+
         if not os.path.exists(mecab_ko_dic_path):
             print('Cannot find mecab-ko-dic directory')
             print('MeCab dictionary error')
             exit(-1)
 
-        self.__mecab = MeCab.Tagger(mecab_ko_dic_path)
+        self.__mecab = MeCab.Tagger('-d ' + mecab_ko_dic_path)
         self.__ma_list = []
 
     def open(self):
