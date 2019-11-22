@@ -73,6 +73,7 @@ class DataWriter(object):
         self.__type_alphabet = type_alphabet
 
     def write(self, sentences, word, pos, head, type, lengths, symbolic_root=False, symbolic_end=False):
+        print('')
         batch_size, _, lemma_length = word.shape
         start = 1 if symbolic_root else 0
         end = 1 if symbolic_end else 0
@@ -86,4 +87,4 @@ class DataWriter(object):
 
                 print('%d\t%s\t%s\t%s\t%s\t%s\t%d\t%s\t%s\t%s' % (j, sentences[i][j-start][1], sentences[i][j-start][2], sentences[i][j-start][3], \
                                                                                        sentences[i][j-start][4], sentences[i][j-start][5], h, t, sentences[i][j-start][8], sentences[i][j-start][9]))
-
+        print('')
