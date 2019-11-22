@@ -1,7 +1,6 @@
 from __future__ import print_function
 
-import sys
-import os
+import sys, os
 
 sys.path.append(".")
 sys.path.append("..")
@@ -10,7 +9,8 @@ import time
 import argparse
 import json
 
-#import pdb
+import warnings
+warnings.simplefilter("ignore", UserWarning)
 
 import torch
 from neuronlp2.io import get_logger, conllx_stacked_data
@@ -29,8 +29,8 @@ def main():
 
     args_parser.add_argument('--model_path', help='path for parser model directory', required=True)
     args_parser.add_argument('--model_name', help='parser model file', required=True)
-    args_parser.add_argument('--output_path', help='path for result with parser model', required=True)
-    args_parser.add_argument('--predict_data', help='data for predict ', required=True)
+    args_parser.add_argument('--predict_data', help='data for predict ')
+    args_parser.add_argument('--output_path', help='path for result with parser model')
     args_parser.add_argument('--conllu_converted', help='path for converted conllu file from test file')
     args_parser.add_argument('--beam', type=int, default=1, help='Beam size for decoding')
     args_parser.add_argument('--use_gpu', action='store_true', help='use the gpu')
@@ -175,89 +175,108 @@ def main():
     ##########################
     # End of Stack Pointer Network Loading
     ##########################
-
-
+  
     ##########################
     # Read Data to predict
     ##########################
-    logger = get_logger("Data Reading")
-
     if use_stdio:
+        logger = get_logger("Data Reading")
         logger.info("Convert origin text to CoNLL-u format from STDIN")
-        converter = CoNLLUConverter()
-
-        raw_snt = ''
-        while raw_snt == '':
-            print("Input the sentence to parse") 
-            raw_snt = input('>> ')
-        analyzed_snt  = converter.convert_from_stdin(raw_snt)
-
-        data_test = conllx_stacked_data.sentence_to_variable_for_prediction(analyzed_snt, word_alphabet, char_alphabet, pos_alphabet, type_alphabet, use_gpu=use_gpu, prior_order=prior_order)
-
     else:
-        start_time = time.time()
         logger.info("Convert origin text to CoNLL-u format from file")
-        converter = CoNLLUConverter(predict_data, conllu_converted)
-        source_path = converter.convert_from_file()
-        data_test = conllx_stacked_data.read_stacked_data_to_variable_for_prediction(source_path, word_alphabet, char_alphabet, pos_alphabet, type_alphabet, use_gpu=use_gpu, prior_order=prior_order)
+        if predict_data == None:
+            logger.error('There is no predict data in argument')
+            exit()
+        if output_path == None:
+            logger.warn('There is no output_path in argument')
+            logger.warn('Predicted file will be save with named \'%s\'' % (predict_data + '.predicted'))
+            output_path = predict_data + '.predicted'
+        
+    while True:
+    
+        if use_stdio:
+            print('')
+            converter = CoNLLUConverter()
+    
+            raw_snt = ''
+            while raw_snt == '':
+                print("Input the sentence to parse.") 
+                print("Input 'quit' to quit the program") 
+                raw_snt = input('>> ')
+                if raw_snt == 'quit':
+                    print("Successfully finished.")
+                    exit()
 
-        logger.info("Data converting Finished")
-        logger.info("Data from file to CoNLL-u format converting Time : %s" % (time.time() - start_time))
+            analyzed_snt  = converter.convert_from_stdin(raw_snt)
+    
+            data_test = conllx_stacked_data.sentence_to_variable_for_prediction(analyzed_snt, word_alphabet, char_alphabet, pos_alphabet, type_alphabet, use_gpu=use_gpu, prior_order=prior_order)
+    
+        else:
+            start_time = time.time()
+            converter = CoNLLUConverter(predict_data, conllu_converted)
+            source_path = converter.convert_from_file()
+            data_test = conllx_stacked_data.read_stacked_data_to_variable_for_prediction(source_path, word_alphabet, char_alphabet, pos_alphabet, type_alphabet, use_gpu=use_gpu, prior_order=prior_order)
+    
+            logger.info("Data converting Finished")
+            logger.info("Data from file to CoNLL-u format converting Time : %s" % (time.time() - start_time))
+    
+        num_data = sum(data_test[1])
+        ##########################
+        # End of Reading Data
+        ##########################
+    
+        ##########################
+        # Prediction start
+        ##########################
+        start_time = time.time()
+        
+        if use_stdio == False:
+            logger = get_logger("Predicting data")
+            logger.info("Predicting data start")
+            output_filename = '%s' % (output_path, )
+            pred_writer.start(output_filename)
+    
+        total_inst = 0
+        num_back = 0
+        for batch in conllx_stacked_data.iterate_batch_stacked_variable_for_prediction(data_test, batch_size, use_gpu=use_gpu):
+            input_encoder, sentences = batch
+            word, char, pos, masks, lengths = input_encoder
+    
+            heads_pred, types_pred, _, _ = network.decode(word, char, pos, mask=masks, length=lengths, beam=beam, leading_symbolic=conllx_stacked_data.NUM_SYMBOLIC_TAGS)
+    
+            word = word.data.cpu().numpy()
+            pos = pos.data.cpu().numpy()
+            lengths = lengths.cpu().numpy()
+    
+            pred_writer.write(sentences, word, pos, heads_pred, types_pred, lengths, symbolic_root=True)
+    
+            num_inst, _, lemma_length = word.shape
+            total_inst += num_inst
+    
+            sys.stdout.write("\b" * num_back)
+            sys.stdout.write(" " * num_back)
+            sys.stdout.write("\b" * num_back)
 
-    num_data = sum(data_test[1])
-    ##########################
-    # End of Reading Data
-    ##########################
+            if use_stdio == False:
+                log_info = "({:.1f}%){}/{}".format(total_inst * 100 / num_data, total_inst, num_data)
 
-    ##########################
-    # Prediction start
-    ##########################
-    start_time = time.time()
-    logger = get_logger("Predicting data")
-    logger.info("Predicting data start")
+                sys.stdout.write(log_info)
+                sys.stdout.flush()
+                num_back = len(log_info)
 
-    if use_stdio == False:
-        pred_filename = '%s' % (output_path, )
-        pred_writer.start(pred_filename)
+            logger.info("Predicting Time : %s" % (time.time() - start_time))
 
-    total_inst = 0
-    num_back = 0
-    for batch in conllx_stacked_data.iterate_batch_stacked_variable_for_prediction(data_test, batch_size, use_gpu=use_gpu):
-        input_encoder, sentences = batch
-        word, char, pos, masks, lengths = input_encoder
+        if use_stdio == False:
+            pred_writer.close()
+            break
 
-        heads_pred, types_pred, _, _ = network.decode(word, char, pos, mask=masks, length=lengths, beam=beam, leading_symbolic=conllx_stacked_data.NUM_SYMBOLIC_TAGS)
-
-        word = word.data.cpu().numpy()
-        pos = pos.data.cpu().numpy()
-        lengths = lengths.cpu().numpy()
-
-        pred_writer.write(sentences, word, pos, heads_pred, types_pred, lengths, symbolic_root=True)
-
-        num_inst, _, lemma_length = word.shape
-        total_inst += num_inst
-
-        sys.stdout.write("\b" * num_back)
-        sys.stdout.write(" " * num_back)
-        sys.stdout.write("\b" * num_back)
-
-        log_info = "({:.1f}%){}/{}".format(total_inst * 100 / num_data, total_inst, num_data)
-
-        sys.stdout.write(log_info)
-        sys.stdout.flush()
-        num_back = len(log_info)
-
-    if use_stdio == False:
-        pred_writer.close()
-
-    sys.stdout.write("\b" * num_back)
-    sys.stdout.write(" " * num_back)
-    sys.stdout.write("\b" * num_back)
-
-    logger.info("Predicting Time : %s" % (time.time() - start_time))
     ##########################
     # End of prediction
     ##########################
+    sys.stdout.write("\b" * num_back)
+    sys.stdout.write(" " * num_back)
+    sys.stdout.write("\b" * num_back)
+    
     logger.info('Finished')
     logger.info("Total Time : %s" % (time.time() - total_time))
 
