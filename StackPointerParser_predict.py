@@ -17,6 +17,7 @@ from neuronlp2.io import get_logger, conllx_stacked_data
 from neuronlp2.models import StackPtrNet
 from neuronlp2.io import CoNLLXWriter, DataWriter
 from format.origin2conllu import CoNLLUConverter
+from format.conllu2displacy import conllu_to_displacy_dict, render
 
 
 def main():
@@ -249,20 +250,23 @@ def main():
             lengths = lengths.cpu().numpy()
     
             pred_writer.write(sentences, word, pos, heads_pred, types_pred, lengths, symbolic_root=True)
-    
-            num_inst, _, lemma_length = word.shape
-            total_inst += num_inst
-    
+
             sys.stdout.write("\b" * num_back)
             sys.stdout.write(" " * num_back)
             sys.stdout.write("\b" * num_back)
 
             if use_stdio == False:
+                num_inst, _, lemma_length = word.shape
+                total_inst += num_inst     
+
                 log_info = "({:.1f}%){}/{}".format(total_inst * 100 / num_data, total_inst, num_data)
 
                 sys.stdout.write(log_info)
                 sys.stdout.flush()
                 num_back = len(log_info)
+            else:
+                # displaCy rendering the parsed tree
+                render(pred_writer.get_result())
 
             logger.info("Predicting Time : %s" % (time.time() - start_time))
 
