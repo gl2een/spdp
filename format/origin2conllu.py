@@ -192,7 +192,7 @@ class CoNLLUConverter(object):
             origin_eojeols = origin_snt.split(' ')
 
             for i in range(len(morph)):
-                self.__conll_file.write('%d\t%s\t%s\t-\t%s\t-\t-\t-\t-\t-\n' % (i+1, origin_eojeols[i], ' '.join(morph[i]), '+'.join(pos[i])))
+                self.__conll_file.write('%d\t%s\t%s\t_\t%s\t_\t_\t_\t_\t_\n' % (i+1, origin_eojeols[i], ' '.join(morph[i]), '+'.join(pos[i])))
 
             self.__conll_file.write('\n')
 
