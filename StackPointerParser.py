@@ -621,4 +621,6 @@ def main():
 
 
 if __name__ == '__main__':
+    total_time = time.time()
     main()
+    print("Total Training Time : %s" % (time.time() - total_time))
