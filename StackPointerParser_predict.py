@@ -8,6 +8,7 @@ sys.path.append("..")
 import time
 import argparse
 import json
+import pdb
 
 import warnings
 warnings.simplefilter("ignore", UserWarning)
@@ -18,6 +19,7 @@ from neuronlp2.models import StackPtrNet
 from neuronlp2.io import CoNLLXWriter, DataWriter
 from format.origin2conllu import CoNLLUConverter
 from format.conllu2displacy import conllu_to_displacy_dict, render
+from extractor.sentence_extractor import separateSentence
 
 
 def main():
@@ -194,6 +196,8 @@ def main():
             output_path = predict_data + '.predicted'
         
     while True:
+
+        num_back = 0
     
         if use_stdio:
             print('')
@@ -204,9 +208,10 @@ def main():
                 print("Input the sentence to parse.") 
                 print("Input 'quit' to quit the program") 
                 raw_snt = input('>> ')
-                if raw_snt == 'quit':
-                    print("Successfully finished.")
-                    exit()
+
+            if raw_snt.strip() == 'quit':
+                print("Finishing Prediction..")
+                break
 
             analyzed_snt  = converter.convert_from_stdin(raw_snt)
     
@@ -217,7 +222,6 @@ def main():
             converter = CoNLLUConverter(predict_data, conllu_converted)
             source_path = converter.convert_from_file()
             data_test = conllx_stacked_data.read_stacked_data_to_variable_for_prediction(source_path, word_alphabet, char_alphabet, pos_alphabet, type_alphabet, use_gpu=use_gpu, prior_order=prior_order)
-    
             logger.info("Data converting Finished")
             logger.info("Data from file to CoNLL-u format converting Time : %s" % (time.time() - start_time))
     
@@ -230,15 +234,16 @@ def main():
         # Prediction start
         ##########################
         start_time = time.time()
+
+        logger = get_logger("Predicting data")
         
         if use_stdio == False:
-            logger = get_logger("Predicting data")
+            #logger = get_logger("Predicting data")
             logger.info("Predicting data start")
             output_filename = '%s' % (output_path, )
             pred_writer.start(output_filename)
     
         total_inst = 0
-        num_back = 0
         for batch in conllx_stacked_data.iterate_batch_stacked_variable_for_prediction(data_test, batch_size, use_gpu=use_gpu):
             input_encoder, sentences = batch
             word, char, pos, masks, lengths = input_encoder
@@ -267,8 +272,10 @@ def main():
             else:
                 # displaCy rendering the parsed tree
                 render(pred_writer.get_result())
+                #pdb.set_trace()
+                separateSentence(pred_writer.get_result())
 
-            logger.info("Predicting Time : %s" % (time.time() - start_time))
+        logger.info("Predicting Time : %s" % (time.time() - start_time))
 
         if use_stdio == False:
             pred_writer.close()
@@ -277,6 +284,7 @@ def main():
     ##########################
     # End of prediction
     ##########################
+    #if use_stdio == False:
     sys.stdout.write("\b" * num_back)
     sys.stdout.write(" " * num_back)
     sys.stdout.write("\b" * num_back)
